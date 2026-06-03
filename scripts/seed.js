@@ -99,7 +99,7 @@ async function main() {
       create: {
         ...productInfo,
         pricing: {
-          create: pricing.map((p: any) => ({
+          create: pricing.map((p) => ({
             unitType: p.unit,
             basePriceInPaisePerUnit: Math.round(p.price),
           })),

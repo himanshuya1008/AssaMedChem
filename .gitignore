@@ -17,3 +17,6 @@ coverage/
 .gradle/
 .history/
 build/
+.env
+*.db
+dev.db*
