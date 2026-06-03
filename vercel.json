@@ -34,36 +34,8 @@
       ]
     }
   ],
-  "env": [
-    {
-      "key": "DATABASE_URL",
-      "description": "PostgreSQL connection string",
-      "type": "secret"
-    },
-    {
-      "key": "NEXTAUTH_URL",
-      "description": "Your Vercel deployment URL",
-      "type": "secret"
-    },
-    {
-      "key": "NEXTAUTH_SECRET",
-      "description": "JWT secret key (minimum 32 characters)",
-      "type": "secret"
-    },
-    {
-      "key": "JWT_SECRET",
-      "description": "JWT secret key for tokens (minimum 32 characters)",
-      "type": "secret"
-    },
-    {
-      "key": "NEXT_PUBLIC_APP_NAME",
-      "description": "Application name",
-      "value": "AasaMedChem"
-    },
-    {
-      "key": "NODE_ENV",
-      "description": "Environment",
-      "value": "production"
-    }
-  ]
+  "env": {
+    "NEXT_PUBLIC_APP_NAME": "AasaMedChem",
+    "NODE_ENV": "production"
+  }
 }
