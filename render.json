@@ -1,0 +1,50 @@
+{
+  "services": [
+    {
+      "key": "web",
+      "name": "assmedchem",
+      "plan": "free",
+      "region": "oregon",
+      "runtime": "node",
+      "buildCommand": "npm install && npm run build",
+      "startCommand": "npm start",
+      "healthCheckPath": "/",
+      "autoDeploy": true,
+      "envVars": [
+        {
+          "key": "DATABASE_URL",
+          "description": "PostgreSQL connection string",
+          "scope": "build"
+        },
+        {
+          "key": "NEXTAUTH_URL",
+          "description": "Your Render deployment URL",
+          "scope": "build"
+        },
+        {
+          "key": "NEXTAUTH_SECRET",
+          "description": "JWT secret key (minimum 32 characters)",
+          "scope": "build"
+        },
+        {
+          "key": "JWT_SECRET",
+          "description": "JWT secret key for tokens (minimum 32 characters)",
+          "scope": "build"
+        },
+        {
+          "key": "NODE_ENV",
+          "value": "production"
+        },
+        {
+          "key": "NEXT_PUBLIC_APP_NAME",
+          "value": "AasaMedChem"
+        }
+      ]
+    }
+  ]
+}
+        }
+      ]
+    }
+  ]
+}

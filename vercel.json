@@ -1,0 +1,70 @@
+{
+  "buildCommand": "npm run build",
+  "devCommand": "npm run dev",
+  "installCommand": "npm install",
+  "framework": "nextjs",
+  "nodeVersion": "18.x",
+  "functions": {
+    "pages/api/**": {
+      "maxDuration": 60
+    }
+  },
+  "redirects": [
+    {
+      "source": "/admin",
+      "destination": "/admin/",
+      "permanent": false
+    }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "SAMEORIGIN"
+        },
+        {
+          "key": "X-XSS-Protection",
+          "value": "1; mode=block"
+        }
+      ]
+    }
+  ],
+  "env": [
+    {
+      "key": "DATABASE_URL",
+      "description": "PostgreSQL connection string",
+      "type": "secret"
+    },
+    {
+      "key": "NEXTAUTH_URL",
+      "description": "Your Vercel deployment URL",
+      "type": "secret"
+    },
+    {
+      "key": "NEXTAUTH_SECRET",
+      "description": "JWT secret key (minimum 32 characters)",
+      "type": "secret"
+    },
+    {
+      "key": "JWT_SECRET",
+      "description": "JWT secret key for tokens (minimum 32 characters)",
+      "type": "secret"
+    },
+    {
+      "key": "NEXT_PUBLIC_APP_NAME",
+      "description": "Application name",
+      "value": "AasaMedChem"
+    },
+    {
+      "key": "NODE_ENV",
+      "description": "Environment",
+      "value": "production"
+    }
+  ]
+}

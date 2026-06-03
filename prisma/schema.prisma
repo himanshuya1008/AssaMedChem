@@ -1,0 +1,187 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// User model for authentication
+model User {
+  id            String     @id @default(cuid())
+  email         String     @unique
+  password      String
+  name          String?
+  role          String     @default("seller") // "admin" or "seller"
+  isActive      Boolean    @default(true)
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+  
+  // Relations
+  orders        Order[]
+  quotations    Quotation[]
+}
+
+// Product model
+model Product {
+  id              String     @id @default(cuid())
+  name            String     @unique
+  description     String?
+  category        String?    @default("general")
+  sku             String     @unique
+  isActive        Boolean    @default(true)
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+  
+  // Relations
+  pricing         ProductPricing[]
+  inventory       Inventory?
+  orderItems      OrderItem[]
+  quotationItems  QuotationItem[]
+}
+
+// Product Pricing model
+// Strategy: Store base price in smallest unit (paise for INR)
+// This allows precise decimal handling without loss
+model ProductPricing {
+  id                      String     @id @default(cuid())
+  productId               String
+  product                 Product    @relation(fields: [productId], references: [id], onDelete: Cascade)
+  
+  // Unit type: "g", "kg", "L", "mL", "item"
+  unitType                String
+  
+  // Base price stored in smallest unit (paise = 1/100 INR)
+  // Example: ₹100.50 = 10050 paise
+  basePriceInPaisePerUnit Decimal    @db.Decimal(20, 0)
+  
+  isActive                Boolean    @default(true)
+  createdAt               DateTime   @default(now())
+  updatedAt               DateTime   @updatedAt
+  
+  @@unique([productId, unitType])
+  @@index([productId])
+}
+
+// Inventory model
+// Strategy: Store quantities in base units
+// Weight: stored in grams (g)
+// Volume: stored in milliliters (mL)
+// Count: stored in items
+model Inventory {
+  id                      String     @id @default(cuid())
+  productId               String     @unique
+  product                 Product    @relation(fields: [productId], references: [id], onDelete: Cascade)
+  
+  // Quantity in base unit (grams for weight, milliliters for volume, items for count)
+  quantityInBaseUnit      Decimal    @db.Decimal(20, 6)
+  
+  // Dimension type: "weight" (base unit: g), "volume" (base unit: mL), "count" (base unit: item)
+  dimensionType           String     @default("count")
+  
+  lastUpdated             DateTime   @updatedAt
+  
+  @@index([productId])
+}
+
+// Order model
+model Order {
+  id              String     @id @default(cuid())
+  userId          String
+  user            User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Status: "draft", "submitted", "approved", "rejected", "shipped", "delivered"
+  status          String     @default("draft")
+  
+  // Total price in paise
+  totalPriceInPaise Decimal  @db.Decimal(20, 0)
+  
+  notes           String?
+  
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+  
+  // Relations
+  items           OrderItem[]
+  
+  @@index([userId])
+  @@index([status])
+}
+
+// Order Items
+model OrderItem {
+  id                      String     @id @default(cuid())
+  orderId                 String
+  order                   Order      @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  
+  productId               String
+  product                 Product    @relation(fields: [productId], references: [id], onDelete: Cascade)
+  
+  // Unit requested by the user (e.g., "kg", "L", "item")
+  unitRequested           String
+  
+  // Quantity requested in the specified unit (stored with high precision)
+  quantityRequested       Decimal    @db.Decimal(20, 6)
+  
+  // Price calculated at order time (in paise)
+  priceCalculatedInPaise  Decimal    @db.Decimal(20, 0)
+  
+  createdAt               DateTime   @default(now())
+  updatedAt               DateTime   @updatedAt
+  
+  @@index([orderId])
+  @@index([productId])
+}
+
+// Quotation model (similar to Order, but for RFQ - Request For Quote)
+model Quotation {
+  id              String     @id @default(cuid())
+  userId          String
+  user            User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Status: "pending", "quoted", "rejected", "expired"
+  status          String     @default("pending")
+  
+  // Total price in paise
+  totalPriceInPaise Decimal  @db.Decimal(20, 0) @default(0)
+  
+  notes           String?
+  
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+  
+  // Relations
+  items           QuotationItem[]
+  
+  @@index([userId])
+  @@index([status])
+}
+
+// Quotation Items
+model QuotationItem {
+  id                      String     @id @default(cuid())
+  quotationId             String
+  quotation               Quotation  @relation(fields: [quotationId], references: [id], onDelete: Cascade)
+  
+  productId               String
+  product                 Product    @relation(fields: [productId], references: [id], onDelete: Cascade)
+  
+  // Unit requested by the user
+  unitRequested           String
+  
+  // Quantity requested in the specified unit
+  quantityRequested       Decimal    @db.Decimal(20, 6)
+  
+  // Price calculated/quoted (in paise)
+  priceCalculatedInPaise  Decimal    @db.Decimal(20, 0) @default(0)
+  
+  createdAt               DateTime   @default(now())
+  updatedAt               DateTime   @updatedAt
+  
+  @@index([quotationId])
+  @@index([productId])
+}
