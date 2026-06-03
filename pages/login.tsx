@@ -32,11 +32,11 @@ export default function Login() {
         return
       }
 
-      localStorage.setItem('token', data.token)
-      localStorage.setItem('userRole', data.user.role)
-      localStorage.setItem('userName', data.user.name)
+      localStorage.setItem('token', data.data.token)
+      localStorage.setItem('userRole', data.data.user.role)
+      localStorage.setItem('userName', data.data.user.name)
 
-      if (data.user.role === 'admin') {
+      if (data.data.user.role === 'admin') {
         router.push('/admin')
       } else {
         router.push('/seller')
