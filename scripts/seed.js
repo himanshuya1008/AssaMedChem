@@ -6,24 +6,28 @@ const prisma = new PrismaClient()
 async function main() {
   console.log('🌱 Seeding database...')
 
-  // Create test users
+  // Create test users that align with the quick login credentials
   const adminUser = await prisma.user.upsert({
-    where: { email: 'admin@test.com' },
-    update: {},
+    where: { email: 'admin@assmedchem.com' },
+    update: {
+      password: await bcrypt.hash('admin123', 10),
+    },
     create: {
-      email: 'admin@test.com',
-      password: await bcrypt.hash('password123', 10),
+      email: 'admin@assmedchem.com',
+      password: await bcrypt.hash('admin123', 10),
       name: 'Admin User',
       role: 'admin',
     },
   })
 
   const sellerUser = await prisma.user.upsert({
-    where: { email: 'seller@test.com' },
-    update: {},
+    where: { email: 'seller@assmedchem.com' },
+    update: {
+      password: await bcrypt.hash('seller123', 10),
+    },
     create: {
-      email: 'seller@test.com',
-      password: await bcrypt.hash('password123', 10),
+      email: 'seller@assmedchem.com',
+      password: await bcrypt.hash('seller123', 10),
       name: 'Seller User',
       role: 'seller',
     },
@@ -38,6 +42,7 @@ async function main() {
       description: 'Industrial grade sulfuric acid - 98% pure',
       category: 'Acids',
       sku: 'SA-001',
+      imageUrl: 'https://images.unsplash.com/photo-1603126857599-f6e157fa2fe6?auto=format&fit=crop&q=80&w=300',
       pricing: [
         { unit: 'L', price: 5000 }, // ₹50.00 per liter
         { unit: 'mL', price: 5 }, // ₹0.05 per milliliter
@@ -49,6 +54,7 @@ async function main() {
       description: 'Caustic soda pellets - analytical grade',
       category: 'Bases',
       sku: 'NaOH-001',
+      imageUrl: 'https://images.unsplash.com/photo-1576086213369-97a306d36557?auto=format&fit=crop&q=80&w=300',
       pricing: [
         { unit: 'kg', price: 30000 }, // ₹300 per kg
         { unit: 'g', price: 30 }, // ₹0.30 per gram
@@ -60,6 +66,7 @@ async function main() {
       description: 'Laboratory grade HCl - 37% aqueous solution',
       category: 'Acids',
       sku: 'HCl-001',
+      imageUrl: 'https://images.unsplash.com/photo-1532187640605-a35d740ef6b6?auto=format&fit=crop&q=80&w=300',
       pricing: [
         { unit: 'L', price: 3500 }, // ₹35 per liter
         { unit: 'mL', price: 3.5 }, // ₹0.035 per milliliter
@@ -71,6 +78,7 @@ async function main() {
       description: 'Laboratory grade acetone - 99.9% pure',
       category: 'Solvents',
       sku: 'ACE-001',
+      imageUrl: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&q=80&w=300',
       pricing: [
         { unit: 'L', price: 2000 }, // ₹20 per liter
         { unit: 'mL', price: 2 }, // ₹0.02 per milliliter
@@ -82,6 +90,7 @@ async function main() {
       description: 'Food grade salt crystals',
       category: 'Salts',
       sku: 'NaCl-001',
+      imageUrl: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&q=80&w=300',
       pricing: [
         { unit: 'kg', price: 5000 }, // ₹50 per kg
         { unit: 'g', price: 5 }, // ₹0.05 per gram
@@ -95,7 +104,12 @@ async function main() {
 
     const product = await prisma.product.upsert({
       where: { sku: productInfo.sku },
-      update: {},
+      update: {
+        imageUrl: productInfo.imageUrl,
+        description: productInfo.description,
+        category: productInfo.category,
+        name: productInfo.name,
+      },
       create: {
         ...productInfo,
         pricing: {

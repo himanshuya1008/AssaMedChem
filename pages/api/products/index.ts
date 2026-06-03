@@ -41,6 +41,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       description: product.description,
       category: product.category,
       sku: product.sku,
+      imageUrl: product.imageUrl,
       pricing: product.pricing.map((p) => ({
         id: p.id,
         unit: p.unitType,

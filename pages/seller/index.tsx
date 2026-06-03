@@ -9,6 +9,7 @@ interface Product {
   description: string
   category: string
   sku: string
+  imageUrl?: string
   pricing: { id: string; unit: string; priceInRupees: string; priceFormatted: string }[]
 }
 
@@ -31,6 +32,7 @@ export default function SellerStore() {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null)
   const [selectedUnit, setSelectedUnit] = useState('')
   const [quantity, setQuantity] = useState('')
+  const [deliveryLocation, setDeliveryLocation] = useState('')
 
   useEffect(() => {
     const token = localStorage.getItem('token')
@@ -131,6 +133,7 @@ export default function SellerStore() {
             quantity: item.quantity,
           })),
           notes: 'Order from seller portal',
+          deliveryLocation: deliveryLocation,
         }),
       })
 
@@ -207,20 +210,34 @@ export default function SellerStore() {
             ) : (
               <div className="grid grid-cols-1 gap-6">
                 {filteredProducts.map((product) => (
-                  <div key={product.id} className="bg-white rounded-lg shadow p-6 hover:shadow-lg transition">
-                    <div className="flex justify-between items-start mb-3">
-                      <div>
-                        <h3 className="text-lg font-semibold text-gray-900">{product.name}</h3>
-                        <p className="text-sm text-gray-600">SKU: {product.sku}</p>
-                      </div>
-                      {product.category && (
-                        <span className="bg-indigo-100 text-indigo-800 px-3 py-1 rounded text-sm font-semibold">
-                          {product.category}
-                        </span>
+                  <div key={product.id} className="bg-white rounded-lg shadow p-6 hover:shadow-lg transition flex flex-col sm:flex-row gap-6">
+                    {/* Product Image */}
+                    <div className="w-full sm:w-32 sm:h-32 h-48 bg-gradient-to-br from-indigo-50 to-indigo-100 rounded-xl flex-shrink-0 flex items-center justify-center border border-indigo-100 overflow-hidden relative">
+                      {product.imageUrl ? (
+                        <img
+                          src={product.imageUrl}
+                          alt={product.name}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <span className="text-4xl">🧪</span>
                       )}
                     </div>
+                    
+                    <div className="flex-1">
+                      <div className="flex justify-between items-start mb-3">
+                        <div>
+                          <h3 className="text-lg font-semibold text-gray-900">{product.name}</h3>
+                          <p className="text-sm text-gray-600">SKU: {product.sku}</p>
+                        </div>
+                        {product.category && (
+                          <span className="bg-indigo-100 text-indigo-800 px-3 py-1 rounded text-sm font-semibold">
+                            {product.category}
+                          </span>
+                        )}
+                      </div>
 
-                    {product.description && <p className="text-gray-600 mb-4">{product.description}</p>}
+                      {product.description && <p className="text-gray-600 mb-4">{product.description}</p>}
 
                     <div className="mb-4">
                       <p className="text-sm font-semibold text-gray-700 mb-2">Available Units & Pricing:</p>
@@ -307,6 +324,7 @@ export default function SellerStore() {
                         Select Product
                       </button>
                     )}
+                    </div>
                   </div>
                 ))}
               </div>
@@ -344,6 +362,21 @@ export default function SellerStore() {
                 </div>
 
                 <div className="border-t border-gray-200 pt-4">
+                  {/* Delivery Location Input */}
+                  <div className="mb-4">
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                      Delivery Location *
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g., Warehouse B, Sector 4"
+                      value={deliveryLocation}
+                      onChange={(e) => setDeliveryLocation(e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm"
+                      required
+                    />
+                  </div>
+
                   <div className="flex justify-between mb-4">
                     <p className="font-semibold text-gray-900">Total:</p>
                     <p className="text-lg font-bold text-indigo-600">₹{totalAmount.toFixed(2)}</p>

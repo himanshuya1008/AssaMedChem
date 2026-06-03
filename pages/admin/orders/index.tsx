@@ -20,6 +20,7 @@ interface Order {
   createdAt: string
   items: OrderItem[]
   notes: string
+  deliveryLocation?: string
 }
 
 export default function AdminOrders() {
@@ -222,6 +223,11 @@ export default function AdminOrders() {
                   <p className="text-sm text-gray-600">Customer</p>
                   <p className="font-semibold text-gray-900">{selectedOrder.user.name}</p>
                   <p className="text-sm text-gray-600">{selectedOrder.user.email}</p>
+                </div>
+
+                <div>
+                  <p className="text-sm text-gray-600">Delivery Location</p>
+                  <p className="font-semibold text-gray-900 text-indigo-700">{selectedOrder.deliveryLocation || 'Main Warehouse'}</p>
                 </div>
 
                 <div>

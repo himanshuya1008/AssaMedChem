@@ -55,7 +55,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   if (req.method === 'POST') {
     try {
-      const { items, notes } = req.body
+      const { items, notes, deliveryLocation } = req.body
 
       if (!items || items.length === 0) {
         return res.status(400).json(errorResponse('At least one item required'))
@@ -103,6 +103,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           status: 'submitted',
           totalPriceInPaise,
           notes,
+          deliveryLocation: deliveryLocation || 'Main Warehouse',
           items: {
             create: orderItems,
           },

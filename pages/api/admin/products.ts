@@ -36,7 +36,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     try {
-      const { name, description, category, sku, pricing, inventory } = req.body
+      const { name, description, category, sku, pricing, inventory, imageUrl } = req.body
 
       if (!name || !sku) {
         return res.status(400).json(errorResponse('Name and SKU required'))
@@ -55,6 +55,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           description,
           category,
           sku,
+          imageUrl,
           pricing: {
             create: (pricing || []).map((p: any) => ({
               unitType: p.unit,

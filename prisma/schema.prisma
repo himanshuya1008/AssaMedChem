@@ -34,6 +34,7 @@ model Product {
   category        String?    @default("general")
   sku             String     @unique
   isActive        Boolean    @default(true)
+  imageUrl        String?
   createdAt       DateTime   @default(now())
   updatedAt       DateTime   @updatedAt
   
@@ -94,6 +95,7 @@ model Order {
   totalPriceInPaise Decimal
   
   notes           String?
+  deliveryLocation String?   @default("Main Warehouse")
   
   createdAt       DateTime   @default(now())
   updatedAt       DateTime   @updatedAt

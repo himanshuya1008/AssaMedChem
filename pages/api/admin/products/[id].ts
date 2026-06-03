@@ -39,6 +39,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         description: product.description,
         category: product.category,
         sku: product.sku,
+        imageUrl: product.imageUrl,
         dimensionType: product.inventory?.dimensionType || 'count',
         quantity: product.inventory ? product.inventory.quantityInBaseUnit.toString() : '0',
         pricing: product.pricing.map((p) => ({
@@ -56,7 +57,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   if (req.method === 'PUT' || req.method === 'PATCH') {
     try {
-      const { name, description, category, sku, pricing, inventory } = req.body
+      const { name, description, category, sku, pricing, inventory, imageUrl } = req.body
 
       if (!name || !sku) {
         return res.status(400).json(errorResponse('Name and SKU required'))
@@ -83,6 +84,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             description,
             category,
             sku,
+            imageUrl,
           },
         })
 
